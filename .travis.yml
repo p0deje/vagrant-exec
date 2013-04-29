@@ -1,5 +1,7 @@
 language: ruby
 rvm:
   - 2.0.0
-before_script: bundle exec rake features:bootstrap
+before_script:
+  - sudo apt-get install -y virtualbox-4.2
+  - bundle exec rake features:bootstrap
 script: bundle exec rake features:run
