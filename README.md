@@ -4,7 +4,6 @@ vagrant-exec
 Vagrant plugin to execute commands within the context of VM synced directory.
 
 [![Gem Version](https://badge.fury.io/rb/vagrant-exec.png)](http://badge.fury.io/rb/vagrant-exec)
-[![Build Status](https://secure.travis-ci.org/p0deje/vagrant-exec.png)](http://travis-ci.org/p0deje/vagrant-exec)
 
 Description
 -----------
