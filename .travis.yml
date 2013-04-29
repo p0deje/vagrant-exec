@@ -2,7 +2,9 @@ language: ruby
 rvm:
   - 2.0.0
 before_script:
+  - sudo uname -r
   - apt-cache search virtualbox
+  - sudo apt-get install build-essential linux-headers-`uname -r`
   - sudo apt-get install virtualbox
   - bundle exec rake features:bootstrap
 script: bundle exec rake features:run
