@@ -53,8 +53,8 @@ Acceptance tests
 Before running features, you'll need to bootstrap box.
 
 ```shell
-➜ rake features:bootstrap
-➜ rake features:run
+➜ bundle exec rake features:bootstrap
+➜ bundle exec rake features:run
 ```
 
 Note on Patches/Pull Requests
@@ -69,4 +69,4 @@ Note on Patches/Pull Requests
 Copyright
 ---------
 
-Copyright (c) 2013-2013 Alex Rodionov. See LICENSE for details.
+Copyright (c) 2013-2013 Alex Rodionov. See LICENSE.md for details.
