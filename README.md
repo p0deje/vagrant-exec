@@ -56,6 +56,12 @@ Before running features, you'll need to bootstrap box.
 ➜ bundle exec rake features:run
 ```
 
+After you're done, remove Vagrant box.
+
+```shell
+➜ bundle exec rake features:cleanup
+```
+
 Note on Patches/Pull Requests
 -----------------------------
 
