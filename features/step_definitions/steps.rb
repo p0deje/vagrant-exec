@@ -28,3 +28,20 @@ end
   RUBY
   step 'I append to "Vagrantfile" with:', config
 end
+
+
+Given(/^I set vagrant-exec env with the following values:$/) do |table|
+  data = table.hashes
+  config = data.map do |hash|
+    key, value = "#{hash['key']}", "#{hash['value']}"
+    %(config.exec.env['#{key}'] = '#{value}')
+  end
+
+  config = <<-RUBY
+
+Vagrant.configure('2') do |config|
+  #{config.join("\n\s\s")}
+end
+  RUBY
+  step 'I append to "Vagrantfile" with:', config
+end

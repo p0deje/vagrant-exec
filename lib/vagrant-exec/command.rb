@@ -24,6 +24,12 @@ module VagrantPlugins
 
           plain = argv.join(' ')
           command =  "cd #{vm.config.exec.folder}; "
+          env = vm.config.exec.env
+          if env.any?
+            env.each do |key, value|
+              command << "export #{key}=#{value} && "
+            end
+          end
           if vm.config.exec.bundler && !(plain =~ /^bundle /)
             command << 'bundle exec '
           end

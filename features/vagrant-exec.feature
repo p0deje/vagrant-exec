@@ -56,6 +56,15 @@ Feature: vagrant-exec
     And the output should contain "bundler should be boolean"
 
   Scenario: can use custom VM
+  Scenario: can export environment variables
+    Given I set vagrant-exec env with the following values:
+      | key   | value |
+      | TEST1 | true  |
+      | TEST2 | false |
+    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant exec pwd`
+    Then the exit status should be 0
+    And the output should contain "Executing single command on remote machine: cd /vagrant && export TEST1=true && export TEST2=false && pwd"
     Given I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec --machine vm pwd`
     And the output should contain "machine with the name 'vm' was not found"
