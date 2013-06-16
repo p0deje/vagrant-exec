@@ -3,38 +3,45 @@ module VagrantPlugins
     class Command < Vagrant.plugin(2, :command)
 
       def execute
-        options = {}
-
-        opts = OptionParser.new do | o |
+        opts = OptionParser.new do |o|
           o.banner = 'Usage: vagrant exec [options] <command>'
           o.separator ''
 
-          o.on('-m', '--machine VM', 'VM name to use.') do | vm |
-            options[:machine] = vm
+          o.on('-h', '--help', 'Print this help') do
+            safe_puts(opts.help)
           end
         end
 
-        # Parse the options
-        argv = parse_options(opts)
-        return unless argv
+        argv = split_main_and_subcommand(@argv.dup)
+        exec_args, cmd, cmd_args = argv[0], argv[1], argv[2]
+
+        # show help
+        if !cmd || exec_args.any? { |a| a == '-h' || a == '--help' }
+          safe_puts(opts.help)
+          return nil
+        end
 
         # Execute the actual SSH
-        with_target_vms(options[:machine], single_target: true) do | vm |
+        with_target_vms(nil, single_target: true) do |vm|
           vm.config.exec.finalize! # TODO: do we have to call it explicitly?
 
-          plain = argv.join(' ')
-          command =  "cd #{vm.config.exec.folder}; "
+          plain   = "#{cmd} " << cmd_args.join(' ')
+          command = "cd #{vm.config.exec.folder} && "
+
           env = vm.config.exec.env
           if env.any?
             env.each do |key, value|
               command << "export #{key}=#{value} && "
             end
           end
+
           if vm.config.exec.bundler && !(plain =~ /^bundle /)
             command << 'bundle exec '
           end
+
           command << plain
-          @logger.debug("Executing single command on remote machine: #{command}")
+
+          @logger.info("Executing single command on remote machine: #{command}")
           env = vm.action(:ssh_run, ssh_run_command: command)
 
           status = env[:ssh_run_exit_status] || 0

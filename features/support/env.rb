@@ -1,4 +1,5 @@
 require 'aruba/cucumber'
+ENV['VAGRANT_LOG'] = 'info'
 
 Before do
   # VM start takes a long time
