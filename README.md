@@ -1,9 +1,7 @@
-vagrant-exec
+vagrant-exec [![Gem Version](https://badge.fury.io/rb/vagrant-exec.png)](http://badge.fury.io/rb/vagrant-exec)
 ===============
 
 Vagrant plugin to execute commands within the context of VM synced directory.
-
-[![Gem Version](https://badge.fury.io/rb/vagrant-exec.png)](http://badge.fury.io/rb/vagrant-exec)
 
 Description
 -----------
@@ -37,6 +35,12 @@ Vagrant.configure('2') do |config|
 end
 ```
 
+```shell
+➜ vagrant exec pwd
+# is the same as
+➜ vagrant ssh -c "cd /custom && bundle exec pwd'
+```
+
 You can also enable bundler to prepend each command with `bundle exec` (note, that it won't be done for commands like `bundle install`).
 
 ```ruby
@@ -44,6 +48,32 @@ Vagrant.configure('2') do |config|
   config.vm.box = 'precise32'
   config.exec.bundler = true
 end
+```
+
+```shell
+➜ vagrant exec pwd
+# is the same as
+➜ vagrant ssh -c "cd /vagrant && bundle exec pwd'
+
+➜ vagrant exec bundle install
+# is the same as
+➜ vagrant ssh -c "cd /vagrant && bundle install'
+```
+
+You can also add environment variables to be exported before.
+
+```ruby
+Vagrant.configure('2') do |config|
+  config.vm.box = 'precise32'
+  config.exec.env['RAILS_ENV'] = 'test'
+  config.exec.env['RAILS_ROOT'] = '/vagrant'
+end
+```
+
+```shell
+➜ vagrant exec pwd
+# is the same as
+➜ vagrant ssh -c "cd /vagrant && export RAILS_ENV=test && export RAILS_ROOT=/vagrant && pwd'
 ```
 
 Acceptance tests
