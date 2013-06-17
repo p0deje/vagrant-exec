@@ -38,7 +38,7 @@ end
 ```shell
 ➜ vagrant exec pwd
 # is the same as
-➜ vagrant ssh -c "cd /custom && bundle exec pwd'
+➜ vagrant ssh -c "cd /custom && bundle exec pwd"
 ```
 
 You can also enable bundler to prepend each command with `bundle exec` (note, that it won't be done for commands like `bundle install`).
@@ -53,11 +53,11 @@ end
 ```shell
 ➜ vagrant exec pwd
 # is the same as
-➜ vagrant ssh -c "cd /vagrant && bundle exec pwd'
+➜ vagrant ssh -c "cd /vagrant && bundle exec pwd"
 
 ➜ vagrant exec bundle install
 # is the same as
-➜ vagrant ssh -c "cd /vagrant && bundle install'
+➜ vagrant ssh -c "cd /vagrant && bundle install"
 ```
 
 You can also add environment variables to be exported before.
@@ -73,7 +73,7 @@ end
 ```shell
 ➜ vagrant exec pwd
 # is the same as
-➜ vagrant ssh -c "cd /vagrant && export RAILS_ENV=test && export RAILS_ROOT=/vagrant && pwd'
+➜ vagrant ssh -c "cd /vagrant && export RAILS_ENV=test && export RAILS_ROOT=/vagrant && pwd"
 ```
 
 Acceptance tests
