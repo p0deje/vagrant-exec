@@ -17,7 +17,7 @@ Example
 ```
 
 Installation
--------
+------------
 
 ```shell
 ➜ vagrant plugin install vagrant-exec
@@ -25,6 +25,8 @@ Installation
 
 Configuration
 -------------
+
+### Custom folder
 
 The root directory can be configured using Vagrantfile.
 
@@ -41,7 +43,9 @@ end
 ➜ vagrant ssh -c "cd /custom && bundle exec pwd"
 ```
 
-You can also enable bundler to prepend each command with `bundle exec` (note, that it won't be done for commands like `bundle install`).
+### Bundler
+
+You can enable bundler to prepend each command with `bundle exec`. Note that it won't be done for commands starting with `bundle` (e.g. `bundle install`).
 
 ```ruby
 Vagrant.configure('2') do |config|
@@ -60,7 +64,9 @@ end
 ➜ vagrant ssh -c "cd /vagrant && bundle install"
 ```
 
-You can also add environment variables to be exported before.
+### Environment variables
+
+You can add environment variables to be exported before.
 
 ```ruby
 Vagrant.configure('2') do |config|
