@@ -89,6 +89,11 @@ Before running features, you'll need to bootstrap box.
 
 ```shell
 ➜ bundle exec rake features:bootstrap
+```
+
+To run features, execute the following rake task.
+
+```shell
 ➜ bundle exec rake features:run
 ```
 
