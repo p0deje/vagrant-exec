@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://github.com/p0deje/vagrant-exec'
   s.summary     = 'Execute commands in Vagrant synced folder'
   s.description = 'Vagrant plugin to execute commands within the context of VM synced folder'
+  s.license     = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
