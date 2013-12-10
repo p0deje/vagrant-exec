@@ -16,14 +16,14 @@ Feature: vagrant-exec
     Given I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should be 0
-    And the output should contain "Executing single command on remote machine: cd /vagrant && pwd"
+    And the output should contain "Executing single command on remote machine: source ~/.profile && cd /vagrant && pwd"
 
   Scenario: can use custom folder
     Given I set vagrant-exec folder to "/tmp"
     And I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should be 0
-    And the output should contain "Executing single command on remote machine: cd /tmp && pwd"
+    And the output should contain "Executing single command on remote machine: source ~/.profile && cd /tmp && pwd"
 
   Scenario: raises error if folder is improperly set
     Given I set vagrant-exec folder to true
@@ -42,13 +42,13 @@ Feature: vagrant-exec
     And I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should not be 0
-    And the output should contain "Executing single command on remote machine: cd /vagrant && bundle exec pwd"
+    And the output should contain "Executing single command on remote machine: source ~/.profile && cd /vagrant && bundle exec pwd"
 
   Scenario: does not use bundler for bundle commands
     Given I set vagrant-exec bundler to true
     And I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec bundle install`
-    Then the output should contain "Executing single command on remote machine: cd /vagrant && bundle install"
+    Then the output should contain "Executing single command on remote machine: source ~/.profile && cd /vagrant && bundle install"
 
   Scenario: raises error if bundler is improperly set
     Given I set vagrant-exec bundler to "true"
@@ -64,7 +64,7 @@ Feature: vagrant-exec
     And I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should be 0
-    And the output should contain "Executing single command on remote machine: cd /vagrant && export TEST1=true && export TEST2=false && pwd"
+    And the output should contain "Executing single command on remote machine: source ~/.profile && cd /vagrant && export TEST1=true && export TEST2=false && pwd"
 
   Scenario Outline: shows help correctly
     Given I run `bundle exec vagrant up`
@@ -81,7 +81,7 @@ Feature: vagrant-exec
   Scenario Outline: passes command arguments correctly
     Given I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec <cmd>`
-    Then the output should contain "Executing single command on remote machine: cd /vagrant && <cmd>"
+    Then the output should contain "Executing single command on remote machine: source ~/.profile && cd /vagrant && <cmd>"
     Examples:
       | cmd                 |
       | cwd .               |

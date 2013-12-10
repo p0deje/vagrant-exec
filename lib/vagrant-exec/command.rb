@@ -10,9 +10,10 @@ module VagrantPlugins
         with_target_vms(nil, single_target: true) do |vm|
           vm.config.exec.finalize! # TODO: do we have to call it explicitly?
 
-          plain   = "#{cmd} " << cmd_args.join(' ')
-          command = "cd #{vm.config.exec.folder} && "
+          plain = "#{cmd} " << cmd_args.join(' ')
 
+          command = "source ~/.profile && "
+          command << "cd #{vm.config.exec.folder} && "
           command << add_env(vm.config.exec.env)
           command << add_bundler(vm.config.exec.bundler, plain)
           command << plain
