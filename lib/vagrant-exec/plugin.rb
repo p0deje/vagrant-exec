@@ -2,7 +2,7 @@ module VagrantPlugins
   module Exec
     class Plugin < Vagrant.plugin(2)
 
-      name 'Vagrant Exec'
+      name 'vagrant-exec'
       description 'Plugin allows to execute commands within the context of synced folder.'
 
       config :exec do

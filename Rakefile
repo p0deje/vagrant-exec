@@ -12,7 +12,7 @@ namespace :features do
     t.cucumber_opts = %w(--format pretty)
   end
 
-  desc 'Removes testing vagrant box .'
+  desc 'Removes testing vagrant box.'
   task(:cleanup) do
     system('bundle exec vagrant destroy -f')
     system('bundle exec vagrant box remove vagrant_exec virtualbox')
