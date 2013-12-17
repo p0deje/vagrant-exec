@@ -12,24 +12,24 @@ Feature: vagrant-exec
   Background:
     Given I have default Vagrantfile
 
-  Scenario: uses /vagrant as default folder
+  Scenario: uses /vagrant as default root
     Given I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should be 0
     And the output should contain "Executing single command on remote machine: source ~/.profile && cd /vagrant && pwd"
 
-  Scenario: can use custom folder
-    Given I set vagrant-exec folder to "/tmp"
+  Scenario: can use custom root
+    Given I set vagrant-exec root to "/tmp"
     And I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should be 0
     And the output should contain "Executing single command on remote machine: source ~/.profile && cd /tmp && pwd"
 
-  Scenario: raises error if folder is improperly set
-    Given I set vagrant-exec folder to true
+  Scenario: raises error if root is improperly set
+    Given I set vagrant-exec root to true
     And I run `bundle exec vagrant up`
     Then the exit status should not be 0
-    And the output should contain "folder should be a string"
+    And the output should contain "root should be a string"
 
   Scenario: does not use bundler by default
     Given I run `bundle exec vagrant up`

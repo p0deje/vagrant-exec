@@ -13,7 +13,7 @@ module VagrantPlugins
           plain = "#{cmd} " << cmd_args.join(' ')
 
           command = "source ~/.profile && "
-          command << "cd #{vm.config.exec.folder} && "
+          command << "cd #{vm.config.exec.root} && "
           command << add_env(vm.config.exec.env)
           command << add_bundler(vm.config.exec.bundler, plain)
           command << plain

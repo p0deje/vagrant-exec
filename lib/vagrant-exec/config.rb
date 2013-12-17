@@ -4,23 +4,23 @@ module VagrantPlugins
 
       attr_reader :env
       attr_accessor :bundler
-      attr_accessor :folder
+      attr_accessor :root
 
       def initialize
         @env     = {}
         @bundler = UNSET_VALUE
-        @folder  = UNSET_VALUE
+        @root    = UNSET_VALUE
       end
 
       def validate(_)
         return { 'exec' => ['bundler should be boolean'] } unless [true, false].include?(@bundler)
-        return { 'exec' => ['folder should be a string'] } unless @folder.is_a?(String)
+        return { 'exec' => ['root should be a string'] }   unless @root.is_a?(String)
 
         {}
       end
 
       def finalize!
-        @folder  = '/vagrant' if @folder  == UNSET_VALUE
+        @root    = '/vagrant' if @root    == UNSET_VALUE
         @bundler = false      if @bundler == UNSET_VALUE
       end
 

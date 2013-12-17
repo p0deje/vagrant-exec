@@ -10,11 +10,11 @@ end
 end
 
 
-Given(/^I set vagrant-exec folder to (.+)$/) do |folder|
+Given(/^I set vagrant-exec root to (.+)$/) do |root|
   config = <<-RUBY
 
 Vagrant.configure('2') do |config|
-  config.exec.folder = #{folder}
+  config.exec.root = #{root}
 end
   RUBY
   step 'I append to "Vagrantfile" with:', config
