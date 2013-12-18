@@ -36,12 +36,12 @@ Feature: vagrant-exec
     When I run `bundle exec vagrant exec <cmd>`
     Then SHH subprocess should execute command "cd /vagrant && <cmd>"
     Examples:
-      | cmd                 |
-      | cwd .               |
-      | cwd ~               |
-      | cwd -h              |
-      | cwd --blah          |
-      | cwd -h blah -v blah |
+      | cmd                   |
+      | cwd .                 |
+      | cwd ~                 |
+      | cwd -h                |
+      | cwd --blah            |
+      | "cwd -h blah -v blah" |
 
   Scenario: uses /vagrant as default root
     Given I run `bundle exec vagrant up`

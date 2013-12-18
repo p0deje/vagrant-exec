@@ -121,6 +121,11 @@ After you're done, remove Vagrant box.
 ➜ bundle exec rake features:cleanup
 ```
 
+Known issues
+-----------------------------
+
+`vagrant-exec` cannot properly handle `-v` in command args (it's caught somewhere before plugin), so executing `vagrant exec ruby -v` will return Vagrant version rather than Ruby. As a workaround, wrap it in quotes: `vagrant exec "ruby -v"`.
+
 Note on Patches/Pull Requests
 -----------------------------
 
