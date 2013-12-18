@@ -19,7 +19,7 @@ module VagrantPlugins
           command = "source ~/.profile && "
           command << "cd #{vm.config.exec.root} && "
           command << add_env(vm.config.exec.env)
-          command << add_bundler(vm.config.exec.bundler, plain)
+          command << prepend_command(vm.config.exec.prepends, plain)
           command << plain
 
           @logger.info("Executing single command on remote machine: #{command}")
@@ -55,20 +55,22 @@ module VagrantPlugins
       end
 
       def add_env(env)
-        ''.tap do |command|
-          if env.any?
-            env.each do |key, value|
-              command << "export #{key}=#{value} && "
-            end
-          end
+        ''.tap do |cmd|
+          env.each do |key, value|
+            cmd << "export #{key}=#{value} && "
+          end if env.any?
         end
       end
 
-      def add_bundler(bundler, plain_command)
-        ''.tap do |command|
-          if bundler && plain_command !~ /^bundle /
-            command << 'bundle exec '
-          end
+      def prepend_command(prepends, command)
+        bin = command.split(' ').first
+        ''.tap do |cmd|
+          prepends.each do |prep|
+            if !prep[:only] || prep[:only].include?(bin)
+              prep = prep[:command].strip # remove trailing space
+              cmd << "#{prep} "
+            end
+          end if prepends.any?
         end
       end
 
