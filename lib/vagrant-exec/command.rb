@@ -2,6 +2,10 @@ module VagrantPlugins
   module Exec
     class Command < Vagrant.plugin(2, :command)
 
+      def self.synopsis
+        'proxies command to VM synced folder root'
+      end
+
       def execute
         cmd, cmd_args = parse_args
         cmd && cmd_args or return nil
