@@ -11,7 +11,7 @@ You will probably use the plugin if you don't want to SSH into the box to execut
 Example
 -------
 
-```shell
+```bash
 ➜ vagrant exec pwd
 /vagrant
 ```
@@ -19,49 +19,67 @@ Example
 Installation
 ------------
 
-```shell
+```bash
 ➜ vagrant plugin install vagrant-exec
 ```
 
 Configuration
 -------------
 
-### Custom folder
+### Custom root
 
 The root directory can be configured using Vagrantfile.
 
 ```ruby
 Vagrant.configure('2') do |config|
   config.vm.box = 'precise32'
-  config.exec.folder = '/custom'
+  config.exec.root = '/custom'
 end
 ```
 
-```shell
+```bash
 ➜ vagrant exec pwd
 # is the same as
 ➜ vagrant ssh -c "cd /custom && bundle exec pwd"
 ```
 
-### Bundler
+### Prepend with
 
-You can enable bundler to prepend each command with `bundle exec`. Note that it won't be done for commands starting with `bundle` (e.g. `bundle install`).
+You can tell `vagrant-exec` to prepend all the commands with custom string.
 
 ```ruby
 Vagrant.configure('2') do |config|
   config.vm.box = 'precise32'
-  config.exec.bundler = true
+  config.exec.prepend_with 'bundle exec'
 end
 ```
 
-```shell
+```bash
 ➜ vagrant exec pwd
 # is the same as
 ➜ vagrant ssh -c "cd /vagrant && bundle exec pwd"
+```
 
-➜ vagrant exec bundle install
+You can also limit prepend to specific commands and combine them.
+
+```ruby
+Vagrant.configure('2') do |config|
+  config.vm.box = 'precise32'
+  config.exec.prepend_with 'bundle exec', :only => %w(rails rspec cucumber)
+  config.exec.prepend_with 'rvmsudo', :only => %w(gem)
+end
+```
+
+```bash
+➜ vagrant exec rails c
 # is the same as
-➜ vagrant ssh -c "cd /vagrant && bundle install"
+➜ vagrant ssh -c "cd /vagrant && bundle exec rails c"
+```
+
+```bash
+➜ vagrant exec gem install bundler
+# is the same as
+➜ vagrant ssh -c "cd /vagrant && rvmsudo gem install bundler"
 ```
 
 ### Environment variables
@@ -76,7 +94,7 @@ Vagrant.configure('2') do |config|
 end
 ```
 
-```shell
+```bash
 ➜ vagrant exec pwd
 # is the same as
 ➜ vagrant ssh -c "cd /vagrant && export RAILS_ENV=test && export RAILS_ROOT=/vagrant && pwd"
@@ -87,19 +105,19 @@ Acceptance tests
 
 Before running features, you'll need to bootstrap box.
 
-```shell
+```bash
 ➜ bundle exec rake features:bootstrap
 ```
 
 To run features, execute the following rake task.
 
-```shell
+```bash
 ➜ bundle exec rake features:run
 ```
 
 After you're done, remove Vagrant box.
 
-```shell
+```bash
 ➜ bundle exec rake features:cleanup
 ```
 
