@@ -16,14 +16,14 @@ module VagrantPlugins
 
           plain = "#{cmd} " << cmd_args.join(' ')
 
-          command = "source ~/.profile && "
-          command << "cd #{vm.config.exec.root} && "
+          command  = "cd #{vm.config.exec.root} && "
           command << add_env(vm.config.exec.env)
           command << prepend_command(vm.config.exec.prepends, plain)
           command << plain
 
           @logger.info("Executing single command on remote machine: #{command}")
-          env = vm.action(:ssh_run, ssh_run_command: command)
+          ssh_opts = { extra_args: ['-q'] } # make it quiet
+          env = vm.action(:ssh_run, ssh_run_command: command, ssh_opts: ssh_opts)
 
           status = env[:ssh_run_exit_status] || 0
           return status
