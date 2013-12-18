@@ -8,5 +8,5 @@ end
 
 After do
   # halt VM
-  system "cd tmp/aruba; bundle exec vagrant halt &> /dev/null"
+  system 'cd tmp/aruba; bundle exec vagrant halt &> /dev/null'
 end
