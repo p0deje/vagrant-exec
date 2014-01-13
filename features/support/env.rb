@@ -1,3 +1,7 @@
+unless `bundle exec vagrant box list`.include?('vagrant_exec')
+  raise 'Box is not added! Run "rake features:bootstrap".'
+end
+
 require 'aruba/cucumber'
 ENV['VAGRANT_LOG'] = 'info'
 

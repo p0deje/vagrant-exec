@@ -14,7 +14,8 @@ module VagrantPlugins
         with_target_vms(nil, single_target: true) do |vm|
           vm.config.exec.finalize! # TODO: do we have to call it explicitly?
 
-          plain = "#{cmd} " << cmd_args.join(' ')
+          plain = cmd.dup
+          plain << ' ' << cmd_args.join(' ') unless cmd_args.empty?
 
           command  = "cd #{vm.config.exec.root} && "
           command << add_env(vm.config.exec.env)
@@ -50,6 +51,10 @@ module VagrantPlugins
           safe_puts(opts.help)
           return nil
         end
+
+        # remove "--" arg which is added by Vagrant
+        # https://github.com/p0deje/vagrant-exec/issues/2
+        cmd_args.delete_if { |a| a == '--' }
 
         return cmd, cmd_args
       end
