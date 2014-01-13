@@ -12,7 +12,8 @@ Feature: vagrant-exec
   Background:
     Given I write to "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
@@ -52,7 +53,8 @@ Feature: vagrant-exec
   Scenario: can use custom root
     Given I overwrite "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
@@ -67,7 +69,8 @@ Feature: vagrant-exec
   Scenario: raises error if root is improperly set
     Given I overwrite "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
@@ -81,7 +84,8 @@ Feature: vagrant-exec
   Scenario: can prepend all commands
     Given I overwrite "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
@@ -96,7 +100,8 @@ Feature: vagrant-exec
   Scenario: can prepend only specific commands
     Given I overwrite "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
@@ -114,7 +119,8 @@ Feature: vagrant-exec
   Scenario: can use prepend multiple times
     Given I overwrite "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
@@ -131,7 +137,8 @@ Feature: vagrant-exec
   Scenario: raises error if prepend command is improperly set
     Given I overwrite "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
@@ -146,7 +153,8 @@ Feature: vagrant-exec
   Scenario: raises error if prepend only is improperly set
     Given I overwrite "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
@@ -160,7 +168,8 @@ Feature: vagrant-exec
   Scenario: can export environment variables
     Given I overwrite "Vagrantfile" with:
       """
-      Vagrant.require_plugin 'vagrant-exec'
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
