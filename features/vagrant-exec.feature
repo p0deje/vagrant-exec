@@ -145,8 +145,7 @@ Feature: vagrant-exec
         config.exec.prepend_with :test
       end
       """
-    Given I set vagrant-exec prepend with :test for all commands
-    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant up`
     Then the exit status should not be 0
     And the output should contain "prepend_with command should be a string"
 
