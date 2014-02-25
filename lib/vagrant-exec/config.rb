@@ -29,6 +29,9 @@ module VagrantPlugins
           if !@prepend_with.all? { |p| !p[:only] || p[:only].is_a?(Array) }
             return { 'exec' => ['prepend_with :only should be an array'] }
           end
+          if !@prepend_with.all? { |p| !p[:root] || p[:root].is_a?(String) }
+            return { 'exec' => ['prepend_with :root should be a string'] }
+          end
         end
 
         {}
