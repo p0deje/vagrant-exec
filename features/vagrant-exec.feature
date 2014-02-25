@@ -164,6 +164,21 @@ Feature: vagrant-exec
     Then the exit status should not be 0
     And the output should contain "prepend_with :only should be an array"
 
+  Scenario: can use custom root in prepend command
+    Given I overwrite "Vagrantfile" with:
+      """
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
+
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.prepend_with 'echo vagrant-exec &&', :only => %w(pwd echo), :root => '/tmp'
+      end
+      """
+    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant exec pwd`
+    Then SHH subprocess should execute command "cd /tmp && echo vagrant-exec && pwd"
+
   Scenario: can export environment variables
     Given I overwrite "Vagrantfile" with:
       """

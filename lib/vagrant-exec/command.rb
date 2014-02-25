@@ -72,6 +72,8 @@ module VagrantPlugins
         ''.tap do |cmd|
           prepends.each do |prep|
             if !prep[:only] || prep[:only].include?(bin)
+              custom_root = prep[:root].strip
+              cmd << "cd #{custom_root} && " if custom_root
               prep = prep[:command].strip # remove trailing space
               cmd << "#{prep} "
             end
