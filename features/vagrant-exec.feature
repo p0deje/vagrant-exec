@@ -44,13 +44,13 @@ Feature: vagrant-exec
       | cwd --blah            |
       | "cwd -h blah -v blah" |
 
-  Scenario: uses /vagrant as default root
+  Scenario: uses /vagrant as default directory
     Given I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should be 0
     And SHH subprocess should execute command "cd /vagrant && pwd"
 
-  Scenario: can use custom root
+  Scenario: raises error if commands are not array or splat
     Given I overwrite "Vagrantfile" with:
       """
       $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
@@ -58,7 +58,23 @@ Feature: vagrant-exec
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.root = '/tmp'
+        config.exec.commands true
+      end
+      """
+    And I run `bundle exec vagrant up`
+    Then the exit status should not be 0
+    And the output should contain "commands should be an array of strings or splat"
+
+
+  Scenario: can use custom directory for all commands
+    Given I overwrite "Vagrantfile" with:
+      """
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
+
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.commands '*', directory: '/tmp'
       end
       """
     And I run `bundle exec vagrant up`
@@ -66,7 +82,7 @@ Feature: vagrant-exec
     Then the exit status should be 0
     And SHH subprocess should execute command "cd /tmp && pwd"
 
-  Scenario: raises error if root is improperly set
+  Scenario: can use custom directory for specific commands
     Given I overwrite "Vagrantfile" with:
       """
       $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
@@ -74,12 +90,47 @@ Feature: vagrant-exec
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.root = true
+        config.exec.commands %w(pwd echo), directory: '/tmp'
+      end
+      """
+    And I run `bundle exec vagrant up`
+    Then SHH subprocess should execute command "cd /tmp && pwd"
+    When I run `bundle exec vagrant exec echo 1`
+    Then SHH subprocess should execute command "cd /tmp && echo 1"
+    When I run `bundle exec vagrant exec env`
+    Then SHH subprocess should execute command "cd /vagrant && env"
+
+  Scenario: raises error if multiple directories are specified for command
+    Given I overwrite "Vagrantfile" with:
+      """
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
+
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.commands %w(pwd echo), directory: '/tmp'
+        config.exec.commands %w(pwd), directory: '/var'
+      end
+      """
+    And I run `bundle exec vagrant up`
+    Then the exit status should not be 0
+    And the output should contain "more than one directory is set for `pwd` command"
+
+  Scenario: raises error if directory is improperly set
+    Given I overwrite "Vagrantfile" with:
+      """
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
+
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.commands '*', directory: true
       end
       """
     And I run `bundle exec vagrant up`
     Then the exit status should not be 0
     And the output should contain "root should be a string"
+
 
   Scenario: can prepend all commands
     Given I overwrite "Vagrantfile" with:
@@ -89,7 +140,7 @@ Feature: vagrant-exec
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.prepend_with 'echo vagrant-exec &&'
+        config.exec.commands '*', prepend: 'echo vagrant-exec &&'
       end
       """
     And I run `bundle exec vagrant up`
@@ -105,7 +156,7 @@ Feature: vagrant-exec
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.prepend_with 'echo vagrant-exec &&', :only => %w(pwd echo)
+        config.exec.commands %w(pwd echo), prepend: 'echo vagrant-exec &&'
       end
       """
     And I run `bundle exec vagrant up`
@@ -116,7 +167,7 @@ Feature: vagrant-exec
     When I run `bundle exec vagrant exec env`
     Then SHH subprocess should execute command "cd /vagrant && env"
 
-  Scenario: can use prepend multiple times
+  Scenario: can combine prepended
     Given I overwrite "Vagrantfile" with:
       """
       $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
@@ -124,17 +175,15 @@ Feature: vagrant-exec
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.prepend_with 'echo vagrant-exec1 &&', :only => %w(pwd)
-        config.exec.prepend_with 'echo vagrant-exec2 &&', :only => %w(echo)
+        config.exec.commands %w(pwd echo), prepend: 'echo vagrant-exec1 &&'
+        config.exec.commands %w(pwd), prepend: 'echo vagrant-exec2 &&'
       end
       """
     And I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
-    Then SHH subprocess should execute command "cd /vagrant && echo vagrant-exec1 && pwd"
-    When I run `bundle exec vagrant exec echo 1`
-    Then SHH subprocess should execute command "cd /vagrant && echo vagrant-exec2 && echo 1"
+    Then SHH subprocess should execute command "cd /vagrant && echo vagrant-exec1 && echo vagrant-exec2 && pwd"
 
-  Scenario: raises error if prepend command is improperly set
+  Scenario: raises error if prepend is improperly set
     Given I overwrite "Vagrantfile" with:
       """
       $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
@@ -142,14 +191,15 @@ Feature: vagrant-exec
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.prepend_with :test
+        config.exec.commands '*', prepend: true
       end
       """
     When I run `bundle exec vagrant up`
     Then the exit status should not be 0
-    And the output should contain "prepend_with command should be a string"
+    And the output should contain "prepend should be a string"
 
-  Scenario: raises error if prepend only is improperly set
+
+  Scenario: can export environment variables for all commands
     Given I overwrite "Vagrantfile" with:
       """
       $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
@@ -157,26 +207,62 @@ Feature: vagrant-exec
 
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.prepend_with 'echo vagrant-exec1 &&', :only => 'test'
-      end
-      """
-    And I run `bundle exec vagrant up`
-    Then the exit status should not be 0
-    And the output should contain "prepend_with :only should be an array"
-
-  Scenario: can export environment variables
-    Given I overwrite "Vagrantfile" with:
-      """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
-      Vagrant.configure('2') do |config|
-        config.vm.box = 'vagrant_exec'
-        config.exec.env['TEST1'] = true
-        config.exec.env['TEST2'] = false
+        config.exec.commands '*', env: { 'TEST1' => true, 'TEST2' => false }
       end
       """
     And I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should be 0
     And SHH subprocess should execute command "cd /vagrant && export TEST1=true && export TEST2=false && pwd"
+
+  Scenario: can export environment variables for specific commands
+    Given I overwrite "Vagrantfile" with:
+      """
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
+
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.commands %w(pwd echo), env: { 'TEST1' => true, 'TEST2' => false }
+      end
+      """
+    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant exec pwd`
+    Then SHH subprocess should execute command "cd /vagrant && export TEST1=true && export TEST2=false && pwd"
+    When I run `bundle exec vagrant exec echo 1`
+    Then SHH subprocess should execute command "cd /vagrant && export TEST1=true && export TEST2=false && echo 1"
+    When I run `bundle exec vagrant exec env`
+    Then SHH subprocess should execute command "cd /vagrant && env"
+
+  Scenario: can combine environment variables
+    Given I overwrite "Vagrantfile" with:
+      """
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
+
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.commands %w(pwd echo), env: { 'TEST1' => true, 'TEST2' => false }
+        config.exec.commands %w(pwd), env: { 'TEST3' => false }
+      end
+      """
+    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant exec pwd`
+    Then SHH subprocess should execute command "cd /vagrant && export TEST1=true && export TEST2=false && export TEST3=false && pwd"
+    When I run `bundle exec vagrant exec echo 1`
+    Then SHH subprocess should execute command "cd /vagrant && export TEST1=true && export TEST2=false && echo 1"
+
+  Scenario: raises error if environment variables are improperly set
+    Given I overwrite "Vagrantfile" with:
+      """
+      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+      require 'vagrant-exec'
+
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.commands '*', env: true
+      end
+      """
+    When I run `bundle exec vagrant up`
+    Then the exit status should not be 0
+    And the output should contain "env should be a hash"
