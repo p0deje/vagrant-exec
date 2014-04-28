@@ -100,22 +100,6 @@ Feature: vagrant-exec
     When I run `bundle exec vagrant exec env`
     Then SHH subprocess should execute command "cd /vagrant && env"
 
-  Scenario: raises error if multiple directories are specified for command
-    Given I overwrite "Vagrantfile" with:
-      """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
-      Vagrant.configure('2') do |config|
-        config.vm.box = 'vagrant_exec'
-        config.exec.commands %w(pwd echo), directory: '/tmp'
-        config.exec.commands %w(pwd), directory: '/var'
-      end
-      """
-    And I run `bundle exec vagrant up`
-    Then the exit status should not be 0
-    And the output should contain "more than one directory is set for `pwd` command"
-
   Scenario: raises error if directory is improperly set
     Given I overwrite "Vagrantfile" with:
       """
