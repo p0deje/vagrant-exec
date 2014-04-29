@@ -1,0 +1,6 @@
+/pkg/
+/tmp/
+/.bundle/
+/vendor/bundle/
+Gemfile.lock
+results.html
