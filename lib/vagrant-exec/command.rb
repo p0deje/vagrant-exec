@@ -3,7 +3,7 @@ module VagrantPlugins
     class Command < Vagrant.plugin(2, :command)
 
       def self.synopsis
-        'proxies command to VM synced folder root'
+        'executes commands in virtual machine'
       end
 
       def execute
@@ -12,19 +12,34 @@ module VagrantPlugins
 
         # Execute the actual SSH
         with_target_vms(nil, single_target: true) do |vm|
-          vm.config.exec.finalize! # TODO: do we have to call it explicitly?
+          settings = vm.config.exec._parsed_commands
+          passed_command, constructed_command = cmd.dup, ''
 
-          plain = cmd.dup
-          plain << ' ' << cmd_args.join(' ') unless cmd_args.empty?
+          # directory is applied only once
+          settings.reverse.each do |command|
+            cmd, opts = command[:cmd], command[:opts]
 
-          command  = "cd #{vm.config.exec.root} && "
-          command << add_env(vm.config.exec.env)
-          command << prepend_command(vm.config.exec.prepends, plain)
-          command << plain
+            if command_matches?(cmd, passed_command) && !directory_added?
+              constructed_command << add_directory(opts[:directory])
+            end
+          end
 
-          @logger.info("Executing single command on remote machine: #{command}")
+          # apply options
+          settings.each do |command|
+            cmd, opts = command[:cmd], command[:opts]
+
+            if command_matches?(cmd, passed_command)
+              constructed_command << add_env(opts[:env])
+              constructed_command << add_prepend(opts[:prepend])
+            end
+          end
+
+          constructed_command << passed_command
+          constructed_command << ' ' << cmd_args.join(' ') if cmd_args.any?
+
+          @logger.info("Executing single command on remote machine: #{constructed_command}")
           ssh_opts = { extra_args: ['-q'] } # make it quiet
-          env = vm.action(:ssh_run, ssh_run_command: command, ssh_opts: ssh_opts)
+          env = vm.action(:ssh_run, ssh_run_command: constructed_command, ssh_opts: ssh_opts)
 
           status = env[:ssh_run_exit_status] || 0
           return status
@@ -59,24 +74,35 @@ module VagrantPlugins
         return cmd, cmd_args
       end
 
-      def add_env(env)
-        ''.tap do |cmd|
-          env.each do |key, value|
-            cmd << "export #{key}=#{value} && "
-          end if env.any?
+      def add_directory(directory)
+        ''.tap do |str|
+          if directory
+            str << "cd #{directory} && "
+            @directory_added = true
+          end
         end
       end
 
-      def prepend_command(prepends, command)
-        bin = command.split(' ').first
-        ''.tap do |cmd|
-          prepends.each do |prep|
-            if !prep[:only] || prep[:only].include?(bin)
-              prep = prep[:command].strip # remove trailing space
-              cmd << "#{prep} "
-            end
-          end if prepends.any?
+      def add_env(env)
+        ''.tap do |str|
+          env.each do |key, value|
+            str << "export #{key}=#{value} && "
+          end if env
         end
+      end
+
+      def add_prepend(prep)
+        ''.tap do |str|
+          str << "#{prep.strip} " if prep
+        end
+      end
+
+      def command_matches?(expected, actual)
+        expected =='*' || expected == actual || expected.include?(actual)
+      end
+
+      def directory_added?
+        !!@directory_added
       end
 
     end # Command

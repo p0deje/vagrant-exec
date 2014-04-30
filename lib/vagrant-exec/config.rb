@@ -2,41 +2,79 @@ module VagrantPlugins
   module Exec
     class Config < Vagrant.plugin(2, :config)
 
-      attr_reader :env
-      attr_accessor :root
+      DEFAULT_SETTINGS = {
+        cmd: '*',
+        opts: {
+          directory: '/vagrant'
+        }
+      }.freeze
 
       def initialize
-        @env          = {}
-        @prepend_with = UNSET_VALUE
-        @root         = UNSET_VALUE
+        @commands = UNSET_VALUE
       end
 
-      def prepend_with(command, opts = {})
-        @prepend_with = [] if @prepend_with == UNSET_VALUE
-        @prepend_with << { :command => command }.merge(opts)
-      end
-
-      def prepends
-        @prepend_with
+      #
+      # Configures commands.
+      #
+      # @param cmd [String, Array<String>]
+      # @param opts [Hash]
+      # @option opts [String] :directory Directory to execute commands in
+      # @option opts [String] :prepend Command to prepend with
+      # @option opts [Hash] :env Environmental variables to export
+      #
+      def commands(cmd, opts = {})
+        @commands = [] if @commands == UNSET_VALUE
+        @commands << { cmd: cmd, opts: opts }
       end
 
       def validate(_)
-        return { 'exec' => ['root should be a string'] } unless @root.is_a?(String)
-        if @prepend_with.any?
-          if !@prepend_with.all? { |p| p[:command].is_a?(String) }
-            return { 'exec' => ['prepend_with command should be a string'] }
+        finalize!
+        errors = _detected_errors
+
+        @commands.each do |command|
+          cmd, opts = command[:cmd], command[:opts]
+
+          if !cmd.is_a?(String) && !array_of_strings?(cmd)
+            errors << "Commands should be String or Array<String>, received: #{cmd.inspect}"
           end
-          if !@prepend_with.all? { |p| !p[:only] || p[:only].is_a?(Array) }
-            return { 'exec' => ['prepend_with :only should be an array'] }
+
+          if opts.has_key?(:directory) && !opts[:directory].is_a?(String)
+            errors << ":directory should be String, received: #{opts[:directory].inspect}"
+          end
+
+          if opts.has_key?(:prepend) && !opts[:prepend].is_a?(String)
+            errors << ":prepend should be String, received: #{opts[:prepend].inspect}"
+          end
+
+          if opts.has_key?(:env) && !opts[:env].is_a?(Hash)
+            errors << ":env should be Hash, received: #{opts[:env].inspect}"
           end
         end
 
-        {}
+        { 'exec' => errors }
       end
 
       def finalize!
-        @root = '/vagrant' if @root == UNSET_VALUE
-        @prepend_with = [] if @prepend_with == UNSET_VALUE
+        if @commands == UNSET_VALUE
+          @commands = [DEFAULT_SETTINGS.dup]
+        else
+          # add default settings and merge options for splat
+          splats, commands = @commands.partition { |command| command[:cmd] == '*' }
+          commands.unshift(DEFAULT_SETTINGS.dup)
+          splats.each { |splat| commands.first[:opts].merge!(splat[:opts]) }
+          @commands = commands
+        end
+      end
+
+      # @api private
+      def _parsed_commands
+        @commands
+      end
+
+      private
+
+      def array_of_strings?(array)
+        array.is_a?(Array) && array.all? { |i| i.is_a?(String) }
       end
 
     end # Config
