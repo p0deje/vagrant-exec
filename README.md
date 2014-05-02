@@ -59,7 +59,7 @@ Vagrant.configure('2') do |config|
   #   ➜ vagrant exec env
   #   # is the same as
   #   ➜ vagrant ssh -c "cd /etc && env"
-  config.exec.commands '*', directory: '/etc'
+  config.exec.commands 'env', directory: '/etc'
 end
 ```
 
