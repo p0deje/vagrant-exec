@@ -8,6 +8,13 @@ Description
 
 You will probably use the plugin if you don't want to SSH into the box to execute commands simply because your machine environment is already configured (e.g. I use ZSH and TextMate bundles to run specs/features).
 
+Installation
+------------
+
+```bash
+➜ vagrant plugin install vagrant-exec
+```
+
 Example
 -------
 
@@ -16,91 +23,85 @@ Example
 /vagrant
 ```
 
-Installation
-------------
-
-```bash
-➜ vagrant plugin install vagrant-exec
-```
-
 Configuration
 -------------
 
-### Custom root
-
-The root directory can be configured using Vagrantfile.
+vagrant-exec has only one configuration option for Vagrantfile, which allows you to alter the behavior of all or specific commands.
 
 ```ruby
 Vagrant.configure('2') do |config|
   config.vm.box = 'precise32'
-  config.exec.root = '/custom'
+  config.exec.commands '*', directory: '/tmp'
 end
 ```
 
-```bash
-➜ vagrant exec pwd
-# is the same as
-➜ vagrant ssh -c "cd /custom && bundle exec pwd"
-```
+Commands can either be:
 
-### Prepend with
+  * `"*"` (wildcard) - apply options to all the commands
+  * `"command"` (string) - apply options for specific commands
+  * `%w(command1 command2)` (array) - apply options to all commands in array
 
-You can tell `vagrant-exec` to prepend all the commands with custom string.
+Configuration options are merged, so if you specify single command in several places, all the option will be applied. The only exception is `:directory`, which is applied only once and in reverse order (i.e. the last set is used).
+
+### Directory
 
 ```ruby
 Vagrant.configure('2') do |config|
   config.vm.box = 'precise32'
-  config.exec.prepend_with 'bundle exec'
+
+  # Make /tmp working directory for all the commands:
+  #   ➜ vagrant exec pwd
+  #   # is the same as
+  #   ➜ vagrant ssh -c "cd /tmp && pwd"
+  config.exec.commands '*', directory: '/tmp'
+
+  # Make /etc working directory for env command:
+  #   ➜ vagrant exec env
+  #   # is the same as
+  #   ➜ vagrant ssh -c "cd /etc && env"
+  config.exec.commands '*', directory: '/etc'
 end
 ```
 
-```bash
-➜ vagrant exec pwd
-# is the same as
-➜ vagrant ssh -c "cd /vagrant && bundle exec pwd"
-```
-
-You can also limit prepend to specific commands and combine them.
+### Prepend
 
 ```ruby
 Vagrant.configure('2') do |config|
   config.vm.box = 'precise32'
-  config.exec.prepend_with 'bundle exec', :only => %w(rails rspec cucumber)
-  config.exec.prepend_with 'rvmsudo', :only => %w(gem)
+
+  # Automatically prepend apt-get command with sudo:
+  #   ➜ vagrant exec apt-get install htop
+  #   # is the same as
+  #   ➜ vagrant ssh -c "cd /vagrant && sudo apt-get install htop"
+  config.exec.commands 'apt-get', prepend: 'sudo'
+
+  # Automatically prepend rails and rspec commands with bundle exec:
+  #   ➜ vagrant exec rails c
+  #   # is the same as
+  #   ➜ vagrant ssh -c "cd /vagrant && bundle exec rails c"
+  #
+  #   ➜ vagrant exec rspec spec/
+  #   # is the same as
+  #   ➜ vagrant ssh -c "cd /vagrant && bundle exec rspec spec/"
+  config.exec.commands %w(rails rspec), prepend: 'bundle exec'
 end
-```
-
-```bash
-➜ vagrant exec rails c
-# is the same as
-➜ vagrant ssh -c "cd /vagrant && bundle exec rails c"
-```
-
-```bash
-➜ vagrant exec gem install bundler
-# is the same as
-➜ vagrant ssh -c "cd /vagrant && rvmsudo gem install bundler"
 ```
 
 ### Environment variables
 
-You can add environment variables to be exported before.
-
 ```ruby
 Vagrant.configure('2') do |config|
   config.vm.box = 'precise32'
-  config.exec.env['RAILS_ENV'] = 'test'
-  config.exec.env['RAILS_ROOT'] = '/vagrant'
+
+  # Automatically export environment variables for ruby command:
+  #   ➜ vagrant exec ruby -e 'puts 1'
+  #   # is the same as
+  #   ➜ vagrant ssh -c "cd /vagrant && export RUBY_GC_MALLOC_LIMIT=100000000 && ruby -e 'puts 1'"
+  config.exec.commands 'ruby', env: { 'RUBY_GC_MALLOC_LIMIT' => 100000000 }
 end
 ```
 
-```bash
-➜ vagrant exec pwd
-# is the same as
-➜ vagrant ssh -c "cd /vagrant && export RAILS_ENV=test && export RAILS_ROOT=/vagrant && pwd"
-```
-
-Acceptance tests
+Testing
 ----------------
 
 Before running features, you'll need to bootstrap box.
@@ -138,4 +139,4 @@ Note on Patches/Pull Requests
 Copyright
 ---------
 
-Copyright (c) 2013-2013 Alex Rodionov. See LICENSE.md for details.
+Copyright (c) 2013-2014 Alex Rodionov. See LICENSE.md for details.
