@@ -54,3 +54,16 @@ Feature: vagrant-exec prepend
     Then SHH subprocess should execute command "cd /vagrant && echo vagrant-exec1 && echo vagrant-exec3 && echo 1"
     When I run `bundle exec vagrant exec env`
     Then SHH subprocess should execute command "cd /vagrant && echo vagrant-exec1 && env"
+
+  Scenario: adds prepend only in the end
+    Given I write to "Vagrantfile" with:
+      """
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.commands 'pwd', prepend: 'bundle exec'
+        config.exec.commands 'pwd', env: { 'TEST' => true }
+      end
+      """
+    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant exec pwd`
+    Then SHH subprocess should execute command "cd /vagrant && export TEST=true && bundle exec pwd"

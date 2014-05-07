@@ -15,22 +15,24 @@ module VagrantPlugins
           settings = vm.config.exec._parsed_commands
           passed_command, constructed_command = cmd.dup, ''
 
-          # directory is applied only once
+          # directory is applied only once in the beginning
           settings.reverse.each do |command|
-            cmd, opts = command[:cmd], command[:opts]
-
-            if command_matches?(cmd, passed_command) && !directory_added?
-              constructed_command << add_directory(opts[:directory])
+            if command_matches?(command[:cmd], passed_command) && !directory_added?
+              constructed_command << add_directory(command[:opts][:directory])
             end
           end
 
-          # apply options
+          # apply environment variables
           settings.each do |command|
-            cmd, opts = command[:cmd], command[:opts]
+            if command_matches?(command[:cmd], passed_command)
+              constructed_command << add_env(command[:opts][:env])
+            end
+          end
 
-            if command_matches?(cmd, passed_command)
-              constructed_command << add_env(opts[:env])
-              constructed_command << add_prepend(opts[:prepend])
+          # apply prepend in the end
+          settings.each do |command|
+            if command_matches?(command[:cmd], passed_command)
+              constructed_command << add_prepend(command[:opts][:prepend])
             end
           end
 
