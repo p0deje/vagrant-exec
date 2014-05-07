@@ -8,16 +8,13 @@ Feature: vagrant-exec
   Background:
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
       end
       """
+    And I run `bundle exec vagrant up`
 
   Scenario Outline: shows help correctly
-    Given I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec <args>`
     Then the output should contain "Usage: vagrant exec [options] <command>"
     Examples:
@@ -29,11 +26,10 @@ Feature: vagrant-exec
       | --help pwd -h |
 
   Scenario Outline: passes command arguments correctly
-    Given I run `bundle exec vagrant up`
-    When I run `bundle exec vagrant exec <cmd>`
-    Then SHH subprocess should execute command "cd /vagrant && <cmd>"
+    When I run `bundle exec vagrant exec <command>`
+    Then SHH subprocess should execute command "cd /vagrant && <command>"
     Examples:
-      | cmd                   |
+      | command               |
       | cwd .                 |
       | cwd ~                 |
       | cwd -h                |

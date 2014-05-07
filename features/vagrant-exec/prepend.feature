@@ -8,9 +8,6 @@ Feature: vagrant-exec prepend
   Scenario: can prepend all commands
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands '*', prepend: 'echo vagrant-exec &&'
@@ -24,9 +21,6 @@ Feature: vagrant-exec prepend
   Scenario: can prepend specific commands
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands 'cmd', prepend: 'echo vagrant-exec1 &&'
@@ -46,9 +40,6 @@ Feature: vagrant-exec prepend
   Scenario: can combine prepended
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands '*', prepend: 'echo vagrant-exec1 &&'
@@ -63,4 +54,3 @@ Feature: vagrant-exec prepend
     Then SHH subprocess should execute command "cd /vagrant && echo vagrant-exec1 && echo vagrant-exec3 && echo 1"
     When I run `bundle exec vagrant exec env`
     Then SHH subprocess should execute command "cd /vagrant && echo vagrant-exec1 && env"
-

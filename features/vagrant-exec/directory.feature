@@ -8,9 +8,6 @@ Feature: vagrant-exec directory
   Scenario: uses /vagrant as default directory
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
       end
@@ -23,9 +20,6 @@ Feature: vagrant-exec directory
   Scenario: can use custom directory for all commands
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands '*', directory: '/tmp'
@@ -39,9 +33,6 @@ Feature: vagrant-exec directory
   Scenario: can use custom directory for specific commands
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands %w(pwd echo), directory: '/tmp'

@@ -8,9 +8,6 @@ Feature: vagrant-exec environment variables
   Scenario: can export environment variables for all commands
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands '*', env: { 'TEST1' => true, 'TEST2' => false }
@@ -24,9 +21,6 @@ Feature: vagrant-exec environment variables
   Scenario: can export environment variables for specific commands
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands 'cmd', env: { 'TEST1' => 'yo' }
@@ -46,9 +40,6 @@ Feature: vagrant-exec environment variables
   Scenario: can combine environment variables
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands '*', env: { 'TEST1' => true }

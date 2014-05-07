@@ -7,9 +7,6 @@ Feature: vagrant-exec validations
   Background:
     Given I write to "Vagrantfile" with:
       """
-      $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
-      require 'vagrant-exec'
-
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands true, directory: nil, prepend: true, env: 0
