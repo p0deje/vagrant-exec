@@ -9,7 +9,7 @@ namespace :features do
   end
 
   Cucumber::Rake::Task.new(:run) do |t|
-    t.cucumber_opts = %w(--require feature --format pretty --format html --out results.html)
+    t.cucumber_opts = %w(--require features --format pretty --format html --out results.html)
   end
 
   desc 'Removes testing vagrant box.'
