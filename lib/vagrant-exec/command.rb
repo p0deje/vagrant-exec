@@ -88,6 +88,7 @@ module VagrantPlugins
       def add_env(env)
         ''.tap do |str|
           env.each do |key, value|
+            value = %("#{value}") if value.include?(' ')
             str << "export #{key}=#{value} && "
           end if env
         end

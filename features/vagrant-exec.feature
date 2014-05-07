@@ -34,4 +34,4 @@ Feature: vagrant-exec
       | cwd ~                 |
       | cwd -h                |
       | cwd --blah            |
-      | "cwd -h blah -v blah" |
+      | 'cwd -h blah -v blah' |

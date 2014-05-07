@@ -54,3 +54,15 @@ Feature: vagrant-exec environment variables
     Then SHH subprocess should execute command "cd /vagrant && export TEST1=true && export TEST3=false && echo 1"
     When I run `bundle exec vagrant exec env`
     Then SHH subprocess should execute command "cd /vagrant && export TEST1=true && env"
+
+  Scenario: wraps values with spaces to quotes
+    Given I write to "Vagrantfile" with:
+      """
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.exec.commands 'pwd', env: { 'TEST' => 'one two' }
+      end
+      """
+    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant exec pwd`
+    Then SHH subprocess should execute command "cd /vagrant && export TEST="one two" && pwd"
