@@ -30,8 +30,8 @@ Feature: vagrant-exec
     Then SHH subprocess should execute command "cd /vagrant && <command>"
     Examples:
       | command               |
-      | cwd .                 |
-      | cwd ~                 |
-      | cwd -h                |
-      | cwd --blah            |
-      | 'cwd -h blah -v blah' |
+      | pwd .                 |
+      | pwd ~                 |
+      | pwd -h                |
+      | pwd --blah            |
+      | 'pwd -h blah -v blah' |
