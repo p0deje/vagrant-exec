@@ -122,7 +122,7 @@ After you're done, remove Vagrant box.
 ➜ bundle exec rake features:cleanup
 ```
 
-To show stduot, add `@announce-stdout` tag to scenario/feature.
+To show stdout, add `@announce-stdout` tag to scenario/feature.
 
 Known issues
 -----------------------------
