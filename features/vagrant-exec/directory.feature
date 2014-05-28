@@ -12,12 +12,12 @@ Feature: vagrant-exec directory
         config.vm.box = 'vagrant_exec'
       end
       """
-    Given I run `bundle exec vagrant up`
+    And I run `bundle exec vagrant up`
     When I run `bundle exec vagrant exec pwd`
     Then the exit status should be 0
     And SHH subprocess should execute command "cd /vagrant && pwd"
 
-  Scenario: can use custom directory for all commands
+  Scenario: uses custom directory for all commands
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|
@@ -30,7 +30,7 @@ Feature: vagrant-exec directory
     Then the exit status should be 0
     And SHH subprocess should execute command "cd /tmp && pwd"
 
-  Scenario: can use custom directory for specific commands
+  Scenario: uses custom directory for specific commands
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|

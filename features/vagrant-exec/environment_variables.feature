@@ -5,7 +5,7 @@ Feature: vagrant-exec environment variables
   As a user
   I should be able to specify them in Vagrantfile
 
-  Scenario: can export environment variables for all commands
+  Scenario: exports environment variables for all commands
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|
@@ -18,7 +18,7 @@ Feature: vagrant-exec environment variables
     Then the exit status should be 0
     And SHH subprocess should execute command "cd /vagrant && export TEST1=true && export TEST2=false && pwd"
 
-  Scenario: can export environment variables for specific commands
+  Scenario: exports environment variables for specific commands
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|
@@ -37,7 +37,7 @@ Feature: vagrant-exec environment variables
     When I run `bundle exec vagrant exec env`
     Then SHH subprocess should execute command "cd /vagrant && env"
 
-  Scenario: can combine environment variables
+  Scenario: combines environment variables
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|

@@ -5,7 +5,7 @@ Feature: vagrant-exec prepend
   As a user
   I should be able to specify it in Vagrantfile
 
-  Scenario: can prepend all commands
+  Scenario: prepends all commands
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|
@@ -18,7 +18,7 @@ Feature: vagrant-exec prepend
     Then the exit status should be 0
     And SHH subprocess should execute command "cd /vagrant && echo vagrant-exec && pwd"
 
-  Scenario: can prepend specific commands
+  Scenario: prepends specific commands
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|
@@ -37,7 +37,7 @@ Feature: vagrant-exec prepend
     When I run `bundle exec vagrant exec env`
     Then SHH subprocess should execute command "cd /vagrant && env"
 
-  Scenario: can combine prepended
+  Scenario: combines prepended
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|
