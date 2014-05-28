@@ -16,7 +16,13 @@ Feature: vagrant-exec
 
   Scenario Outline: shows help correctly
     When I run `bundle exec vagrant exec <args>`
-    Then the output should contain "Usage: vagrant exec [options] <command>"
+    Then the output should contain:
+      """
+      Usage: vagrant exec [options] <command>
+
+          -h, --help                       Print this help
+              --binstubs                   Generate binstubs for configured commands
+      """
     Examples:
       | args          |
       |               |

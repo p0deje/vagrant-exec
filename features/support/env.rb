@@ -3,6 +3,7 @@ unless `bundle exec vagrant box list`.include?('vagrant_exec')
 end
 
 require 'aruba/cucumber'
+require 'pry-byebug'
 ENV['VAGRANT_LOG'] = 'info'
 
 Before do

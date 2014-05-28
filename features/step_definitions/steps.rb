@@ -6,3 +6,10 @@ Then(/^SHH subprocess should execute command "(.+)"$/) do |command|
   ssh += ['-q', '-t', "bash -l -c '#{command.delete("''")}'"]
   assert_partial_output("Executing SSH in subprocess: #{ssh}", all_output)
 end
+
+Then(/^the file "(.+)" should contain result of vagrant ssh-config$/) do |file|
+  # since "bundle exec" adds some output, we actually
+  # assert that file contents are included in stdout
+  step 'I run `bundle exec vagrant ssh-config`'
+  with_file_content(file) { |content| expect(all_stdout).to include(content) }
+end

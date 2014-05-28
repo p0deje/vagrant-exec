@@ -14,17 +14,27 @@ module VagrantPlugins
       end
 
       #
-      # Configures commands.
+      # Retrieve or add command.
       #
-      # @param cmd [String, Array<String>]
-      # @param opts [Hash]
-      # @option opts [String] :directory Directory to execute commands in
-      # @option opts [String] :prepend Command to prepend with
-      # @option opts [Hash] :env Environmental variables to export
+      # @overload commands
+      #   Returns array of commands and all their options
       #
-      def commands(cmd, opts = {})
+      # @overload commands(command, options)
+      #   Configures command with options.
+      #   @param command [String, Array<String>]
+      #   @param opts [Hash]
+      #   @option opts [String] :directory Directory to execute commands in
+      #   @option opts [String] :prepend Command to prepend with
+      #   @option opts [Hash] :env Environmental variables to export
+      #
+      def commands(*args)
         @commands = [] if @commands == UNSET_VALUE
-        @commands << { cmd: cmd, opts: opts }
+
+        if args.empty?
+          @commands
+        else
+          @commands << { cmd: args[0], opts: args[1] || {} }
+        end
       end
 
       def validate(_)
@@ -64,11 +74,6 @@ module VagrantPlugins
           splats.each { |splat| commands.first[:opts].merge!(splat[:opts]) }
           @commands = commands
         end
-      end
-
-      # @api private
-      def _parsed_commands
-        @commands
       end
 
       private

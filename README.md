@@ -101,6 +101,48 @@ Vagrant.configure('2') do |config|
 end
 ```
 
+Binstubs
+----------------
+
+It is possible can generate binstubs for all your configured commands. You might want to do this to avoid typing `vagrant exec` every time before command, or if you want integrate your flow in editor (e.g. running tests from editor).
+
+Assuming you have the following configuration:
+
+```ruby
+Vagrant.configure('2') do |config|
+  config.vm.box = 'precise32'
+  config.exec.commands 'bundle'
+  config.exec.commands %w(rails rake), prepend: 'bundle exec'
+  config.exec.commands %w(rspec cucumber), prepend: 'spring'
+end
+```
+
+You can generate binstubs for each command:
+
+```bash
+➜ vagrant exec --binstubs
+Generated binstub for bundle in bin/bundle.
+Generated binstub for cucumber in bin/cucumber.
+Generated binstub for rails in bin/rails.
+Generated binstub for rake in bin/rake.
+Generated binstub for rspec in bin/rspec.
+```
+
+Now you can use `bin/cucumber` instead of `vagrant exec cucumber` to execute commands in VM. All your configuration (directory, environment variables, prepend) will still be used.
+
+Since binstubs use plain SSH to connect to VM, it creates connection much faster because Vagrant is not invoked:
+
+```bash
+➜ time bin/echo 1
+        0.28 real
+➜ time vagrant exec echo 1
+        2.84 real
+```
+
+To make plain SSH work, it saves current SSH configuration of Vagrant to temporary file when you run `vagrant exec --binstubs`. This means that if your VM network configuration has changed (IP address, port), you will have to regenerate binstubs again. So far I had no problems with this, but it's not very convenient for sure.
+
+Moving forward, you can use projects like [direnv](https://github.com/zimbatm/direnv) to add `bin/` to `PATH` and completely forget that you have VM running.
+
 Testing
 ----------------
 
