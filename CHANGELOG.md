@@ -1,3 +1,7 @@
+## 0.5.1
+
+* Fixed binstubs for defined primary VM (#10 thanks @mikechau)
+
 ## 0.5.0
 
 * Added binstubs support
