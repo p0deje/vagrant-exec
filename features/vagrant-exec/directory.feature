@@ -35,7 +35,7 @@ Feature: vagrant-exec directory
       """
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.commands %w(pwd echo), directory: '/tmp'
+        config.exec.commands %w[pwd echo], directory: '/tmp'
       end
       """
     And I run `bundle exec vagrant up`

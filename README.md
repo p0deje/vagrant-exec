@@ -83,7 +83,7 @@ Vagrant.configure('2') do |config|
   #   ➜ vagrant exec rspec spec/
   #   # is the same as
   #   ➜ vagrant ssh -c "cd /vagrant && bundle exec rspec spec/"
-  config.exec.commands %w(rails rspec), prepend: 'bundle exec'
+  config.exec.commands %w[rails rspec], prepend: 'bundle exec'
 end
 ```
 
@@ -97,14 +97,14 @@ Vagrant.configure('2') do |config|
   #   ➜ vagrant exec ruby -e 'puts 1'
   #   # is the same as
   #   ➜ vagrant ssh -c "cd /vagrant && export RUBY_GC_MALLOC_LIMIT=100000000 && ruby -e 'puts 1'"
-  config.exec.commands 'ruby', env: { 'RUBY_GC_MALLOC_LIMIT' => 100000000 }
+  config.exec.commands 'ruby', env: {'RUBY_GC_MALLOC_LIMIT' => 100000000}
 end
 ```
 
 Binstubs
 ----------------
 
-It is possible can generate binstubs for all your configured commands. You might want to do this to avoid typing `vagrant exec` every time before command, or if you want integrate your flow in editor (e.g. running tests from editor).
+It is possible to generate binstubs for all your configured commands. You might want to do this to avoid typing `vagrant exec` every time before command, or if you want integrate your flow in editor (e.g. running tests from editor).
 
 Assuming you have the following configuration:
 
@@ -112,8 +112,8 @@ Assuming you have the following configuration:
 Vagrant.configure('2') do |config|
   config.vm.box = 'precise32'
   config.exec.commands 'bundle'
-  config.exec.commands %w(rails rake), prepend: 'bundle exec'
-  config.exec.commands %w(rspec cucumber), prepend: 'spring'
+  config.exec.commands %w[rails rake], prepend: 'bundle exec'
+  config.exec.commands %w[rspec cucumber], prepend: 'spring'
 end
 ```
 
@@ -177,7 +177,7 @@ Note on Patches/Pull Requests
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a future version unintentionally.
-* Commit, do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Commit, do not mess with Rakefile, version, or history. (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
 Copyright

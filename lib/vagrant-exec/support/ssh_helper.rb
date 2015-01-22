@@ -11,7 +11,7 @@ module VagrantPlugins
         raise Vagrant::Errors::SSHNotReady if ssh_info.nil?
 
         variables = {
-          host_key: host || "vagrant",
+          host_key: host || 'vagrant',
           ssh_host: ssh_info[:host],
           ssh_port: ssh_info[:port],
           ssh_user: ssh_info[:username],

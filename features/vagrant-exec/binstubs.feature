@@ -12,7 +12,7 @@ Feature: vagrant-exec binstubs
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands 'echo', directory: '/tmp'
-        config.exec.commands %w(pwd echo), prepend: 'test -d . &&', env: { 'TEST' => 1 }
+        config.exec.commands %w[pwd echo], prepend: 'test -d . &&', env: {'TEST' => 1}
       end
       """
     And I run `bundle exec vagrant up`
@@ -93,7 +93,7 @@ Feature: vagrant-exec binstubs
       """
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.commands 'echo', env: { 'TEST' => 'one two' }
+        config.exec.commands 'echo', env: {'TEST' => 'one two'}
       end
       """
     And I run `bundle exec vagrant up`
@@ -122,7 +122,7 @@ Feature: vagrant-exec binstubs
       """
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.commands '*', env: { 'TEST' => 'one two' }
+        config.exec.commands '*', env: {'TEST' => 'one two'}
       end
       """
     And I run `bundle exec vagrant up`

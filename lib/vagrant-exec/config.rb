@@ -33,7 +33,7 @@ module VagrantPlugins
         if args.empty?
           @commands
         else
-          @commands << { cmd: args[0], opts: args[1] || {} }
+          @commands << {cmd: args[0], opts: args[1] || {}}
         end
       end
 
@@ -61,7 +61,7 @@ module VagrantPlugins
           end
         end
 
-        { 'exec' => errors }
+        {'exec' => errors}
       end
 
       def finalize!

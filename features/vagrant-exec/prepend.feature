@@ -24,7 +24,7 @@ Feature: vagrant-exec prepend
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands 'cmd', prepend: 'echo vagrant-exec1 &&'
-        config.exec.commands %w(pwd echo), prepend: 'echo vagrant-exec2 &&'
+        config.exec.commands %w[pwd echo], prepend: 'echo vagrant-exec2 &&'
       end
       """
     And I run `bundle exec vagrant up`
@@ -44,7 +44,7 @@ Feature: vagrant-exec prepend
         config.vm.box = 'vagrant_exec'
         config.exec.commands '*', prepend: 'echo vagrant-exec1 &&'
         config.exec.commands 'pwd', prepend: 'echo vagrant-exec2 &&'
-        config.exec.commands %w(pwd echo), prepend: 'echo vagrant-exec3 &&'
+        config.exec.commands %w[pwd echo], prepend: 'echo vagrant-exec3 &&'
       end
       """
     And I run `bundle exec vagrant up`
@@ -61,7 +61,7 @@ Feature: vagrant-exec prepend
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands 'pwd', prepend: 'bundle exec'
-        config.exec.commands 'pwd', env: { 'TEST' => true }
+        config.exec.commands 'pwd', env: {'TEST' => true}
       end
       """
     And I run `bundle exec vagrant up`

@@ -10,7 +10,7 @@ Feature: vagrant-exec environment variables
       """
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.commands '*', env: { 'TEST1' => true, 'TEST2' => false }
+        config.exec.commands '*', env: {'TEST1' => true, 'TEST2' => false}
       end
       """
     And I run `bundle exec vagrant up`
@@ -24,7 +24,7 @@ Feature: vagrant-exec environment variables
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
         config.exec.commands 'cmd', env: { 'TEST1' => 'yo' }
-        config.exec.commands %w(pwd echo), env: { 'TEST2' => true, 'TEST3' => false }
+        config.exec.commands %w[pwd echo], env: {'TEST2' => true, 'TEST3' => false}
       end
       """
     And I run `bundle exec vagrant up`
@@ -42,9 +42,9 @@ Feature: vagrant-exec environment variables
       """
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.commands '*', env: { 'TEST1' => true }
-        config.exec.commands 'pwd', env: { 'TEST2' => false }
-        config.exec.commands %w(pwd echo), env: { 'TEST3' => false }
+        config.exec.commands '*', env: {'TEST1' => true}
+        config.exec.commands 'pwd', env: {'TEST2' => false}
+        config.exec.commands %w[pwd echo], env: {'TEST3' => false}
       end
       """
     And I run `bundle exec vagrant up`
@@ -60,7 +60,7 @@ Feature: vagrant-exec environment variables
       """
       Vagrant.configure('2') do |config|
         config.vm.box = 'vagrant_exec'
-        config.exec.commands 'pwd', env: { 'TEST' => 'one two' }
+        config.exec.commands 'pwd', env: {'TEST' => 'one two'}
       end
       """
     And I run `bundle exec vagrant up`

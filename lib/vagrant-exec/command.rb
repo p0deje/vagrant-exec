@@ -19,7 +19,7 @@ module VagrantPlugins
           command << ' ' << cmd_args.join(' ') if cmd_args.any?
 
           @logger.info("Executing single command on remote machine: #{command}")
-          ssh_opts = { extra_args: ['-q'] } # make it quiet
+          ssh_opts = {extra_args: ['-q']} # make it quiet
           env = vm.action(:ssh_run, ssh_run_command: command, ssh_opts: ssh_opts)
 
           status = env[:ssh_run_exit_status] || 0
