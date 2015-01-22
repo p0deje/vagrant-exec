@@ -93,6 +93,7 @@ module VagrantPlugins
             command[:constructed].gsub!('"', '\"') # escape double-quotes
 
             variables = {
+              ssh_host: vm.name || 'default',
               ssh_config: SSH_CONFIG,
               shell: shell,
               command: command[:constructed],
