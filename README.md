@@ -183,4 +183,4 @@ Note on Patches/Pull Requests
 Copyright
 ---------
 
-Copyright (c) 2013-2014 Alex Rodionov. See LICENSE.md for details.
+Copyright (c) 2013-2015 Alex Rodionov. See LICENSE.md for details.
