@@ -43,6 +43,24 @@ Feature: vagrant-exec binstubs
     Then the exit status should be 0
     And the output should contain "/vagrant"
 
+  Scenario: writes the ssh host from the defined vm
+    Given I write to "Vagrantfile" with:
+      """
+      Vagrant.configure('2') do |config|
+        config.vm.box = 'vagrant_exec'
+        config.vm.define 'vagrant'
+        config.exec.commands 'echo', directory: '/tmp'
+      end
+      """
+    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant exec --binstubs`
+    And the file "bin/echo" should contain exactly:
+      """
+      #!/bin/bash
+      ssh -F .vagrant/ssh_config -q -t vagrant "bash -l -c 'cd /tmp && echo $@'"
+
+      """
+
   Scenario: dumps vagrant ssh-config to file
     Given I write to "Vagrantfile" with:
       """
