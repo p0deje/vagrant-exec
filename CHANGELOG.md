@@ -1,3 +1,7 @@
+## 0.5.2
+
+* Allow to configure binstubs directory (#11)
+
 ## 0.5.1
 
 * Fixed binstubs for defined primary VM (#10 thanks @mikechau)
