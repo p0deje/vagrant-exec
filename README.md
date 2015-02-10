@@ -143,6 +143,15 @@ To make plain SSH work, it saves current SSH configuration of Vagrant to tempora
 
 Moving forward, you can use projects like [direnv](https://github.com/zimbatm/direnv) to add `bin/` to `PATH` and completely forget that you have VM running.
 
+It is also possible to configure binstubs directory (e.g. default `bin/` collides with Rails binstubs):
+
+```ruby
+Vagrant.configure('2') do |config|
+  config.vm.box = 'precise32'
+  config.exec.binstubs_path = 'vbin'
+end
+```
+
 Testing
 ----------------
 

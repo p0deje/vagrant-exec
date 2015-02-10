@@ -86,23 +86,23 @@ module VagrantPlugins
             }
           end
 
-          shell = vm.config.ssh.shell
+          binstubs_path = vm.config.exec.binstubs_path
+          Dir.mkdir(binstubs_path) unless Dir.exist?(binstubs_path)
 
-          Dir.mkdir('bin') unless Dir.exist?('bin')
           explicit.each do |command|
             command[:constructed].gsub!('"', '\"') # escape double-quotes
 
             variables = {
               ssh_host: vm.name || 'default',
               ssh_config: SSH_CONFIG,
-              shell: shell,
+              shell: vm.config.ssh.shell,
               command: command[:constructed],
             }
             variables.merge!(template_root: "#{File.dirname(__FILE__)}/templates")
 
             binstub = Vagrant::Util::TemplateRenderer.render('binstub', variables)
 
-            filename = "bin/#{command[:command]}"
+            filename = [binstubs_path, command[:command]].join('/')
             File.open(filename, 'w') { |file| file.write binstub }
             File.chmod(0755, filename)
 

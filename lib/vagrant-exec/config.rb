@@ -9,7 +9,10 @@ module VagrantPlugins
         }
       }.freeze
 
+      attr_accessor :binstubs_path
+
       def initialize
+        @binstubs_path = UNSET_VALUE
         @commands = UNSET_VALUE
       end
 
@@ -65,6 +68,8 @@ module VagrantPlugins
       end
 
       def finalize!
+        @binstubs_path = 'bin' if @binstubs_path == UNSET_VALUE
+
         if @commands == UNSET_VALUE
           @commands = [DEFAULT_SETTINGS.dup]
         else

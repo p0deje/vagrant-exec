@@ -88,6 +88,21 @@ Feature: vagrant-exec binstubs
 
       """
 
+  Scenario: respects configured binstubs directory
+    Given I write to "Vagrantfile" with:
+    """
+    Vagrant.configure('2') do |config|
+      config.vm.box = 'vagrant_exec'
+      config.exec.binstubs_path = 'vbin'
+      config.exec.commands 'test'
+    end
+    """
+    And I run `bundle exec vagrant up`
+    When I run `bundle exec vagrant exec --binstubs`
+    Then the output should contain "Generated binstub for test in vbin/test."
+    And a file named "vbin/test" should exist
+    But a file named "bin/test" should not exist
+
   Scenario: escapes double-quotes in command
     Given I write to "Vagrantfile" with:
       """
@@ -130,7 +145,7 @@ Feature: vagrant-exec binstubs
     Then the exit status should be 0
     And the output should contain "No commands to generate binstubs for."
 
-  Scenario: raises if vagrant is not upped
+  Scenario: raises if vagrant is not up
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|
