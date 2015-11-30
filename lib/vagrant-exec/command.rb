@@ -14,7 +14,7 @@ module VagrantPlugins
 
         # Execute the actual SSH
         with_target_vms(nil, single_target: true) do |vm|
-          constructor = CommandConstructor.new(cmd, vm.config.exec.commands)
+          constructor = CommandConstructor.new(cmd, vm.config.exec.commands, vm.config.vm.guest)
           command = constructor.construct_command
           command << ' ' << cmd_args.join(' ') if cmd_args.any?
 
@@ -82,7 +82,7 @@ module VagrantPlugins
           explicit = explicit.map do |command|
             {
               command: command,
-              constructed: CommandConstructor.new(command, commands).construct_command
+              constructed: CommandConstructor.new(command, commands, vm.config.vm.guest).construct_command
             }
           end
 
@@ -95,10 +95,15 @@ module VagrantPlugins
             variables = {
               ssh_host: vm.name || 'default',
               ssh_config: SSH_CONFIG,
-              shell: vm.config.ssh.shell,
               command: command[:constructed],
             }
             variables.merge!(template_root: "#{File.dirname(__FILE__)}/templates")
+
+            if vm.config.guest == :windows
+              variables.merge!(shell: 'cmd', shell_switch: '/c')
+            else
+              variables.merge!(shell: vm.config.ssh.shell, shell_switch: '-c')
+            end
 
             binstub = Vagrant::Util::TemplateRenderer.render('binstub', variables)
 

@@ -1,3 +1,7 @@
+## 0.5.3 (Unreleased)
+
+* Support Windows guests
+
 ## 0.5.2
 
 * Allow to configure binstubs directory (#11)

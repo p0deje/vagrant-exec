@@ -1,2 +1,2 @@
 #!/bin/bash
-ssh -F <%= ssh_config %> -q -t <%= ssh_host %> "<%= shell %> -c '<%= command %> $@'"
+ssh -F <%= ssh_config %> -q -t <%= ssh_host %> "<%= shell %> <%= shell_switch %> '<%= command %> $@'"

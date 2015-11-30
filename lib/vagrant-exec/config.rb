@@ -4,9 +4,7 @@ module VagrantPlugins
 
       DEFAULT_SETTINGS = {
         cmd: '*',
-        opts: {
-          directory: '/vagrant'
-        }
+        opts: {}
       }.freeze
 
       attr_accessor :binstubs_path

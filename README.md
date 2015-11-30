@@ -87,7 +87,7 @@ Vagrant.configure('2') do |config|
 end
 ```
 
-### Environment variables
+### Environment Variables
 
 ```ruby
 Vagrant.configure('2') do |config|
@@ -155,32 +155,25 @@ end
 Testing
 ----------------
 
-Before running features, you'll need to bootstrap box.
+To run features, execute the following rake tasks.
 
 ```bash
-➜ bundle exec rake features:bootstrap
-```
-
-To run features, execute the following rake task.
-
-```bash
-➜ bundle exec rake features:run
-```
-
-After you're done, remove Vagrant box.
-
-```bash
-➜ bundle exec rake features:cleanup
+➜ bundle exec rake features:posix   # runs all tests including tests for POSIX guests
+➜ bundle exec rake features:cleanup # remove vagrant boxes
+➜ bundle exec rake features:windows # runs all tests including tests for Windows guests
+➜ bundle exec rake features:cleanup # remove vagrant boxes
 ```
 
 To show stdout, add `@announce-stdout` tag to scenario/feature.
 
-Known issues
+Known Issues
 -----------------------------
 
 `vagrant-exec` cannot properly handle `-v` in command args (it's caught somewhere before plugin), so executing `vagrant exec ruby -v` will return Vagrant version rather than Ruby. As a workaround, wrap it in quotes: `vagrant exec "ruby -v"`.
 
-Note on Patches/Pull Requests
+Windows guests support is limited. It still depends on SSH connections, but you can use Windows paths and environment variables are handled correctly.
+
+Notes on Patches/Pull Requests
 -----------------------------
 
 * Fork the project.

@@ -1,10 +1,12 @@
 Then(/^SHH subprocess should execute command "(.+)"$/) do |command|
-  ssh  = %w[vagrant@127.0.0.1 -p 2200 -o Compression=yes]
-  ssh += %w[-o DSAAuthentication=yes -o LogLevel=FATAL]
-  ssh += %w[-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null]
-  ssh += %W[-o IdentitiesOnly=yes -i #{Dir.home}/.vagrant.d/insecure_private_key]
-  ssh += ['-q', '-t', "bash -l -c '#{command.delete("''")}'"]
-  assert_partial_output("Executing SSH in subprocess: #{ssh}", all_output)
+  subprocess_line = all_output.split("\n").reverse.find do |l|
+    l.start_with?(' INFO ssh: Executing SSH in subprocess:')
+  end
+  if ENV['VAGRANT_EXEC_GUEST'] == 'posix'
+    assert_matching_output("bash -l -c '#{command.delete("''")}'", subprocess_line)
+  else
+    assert_matching_output("cmd /c '#{command.delete("''")}'", subprocess_line)
+  end
 end
 
 Then(/^the file "(.+)" should contain result of vagrant ssh-config$/) do |file|

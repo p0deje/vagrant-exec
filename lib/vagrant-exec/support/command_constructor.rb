@@ -2,9 +2,10 @@ module VagrantPlugins
   module Exec
     class CommandConstructor
 
-      def initialize(command, config)
+      def initialize(command, config, guest)
         @command = command.dup
         @config = config
+        @guest = guest
       end
 
       def construct_command
@@ -12,7 +13,15 @@ module VagrantPlugins
           # directory is applied only once in the beginning
           @config.reverse.each do |command|
             if command_matches?(command[:cmd], @command) && !directory_added?
-              constructed_command << add_directory(command[:opts][:directory])
+              if command[:opts][:directory]
+                constructed_command << add_directory(command[:opts][:directory])
+              else
+                if @guest == :windows
+                  constructed_command << add_directory('C:\vagrant')
+                else
+                  constructed_command << add_directory('/vagrant')
+                end
+              end
             end
           end
 
@@ -49,7 +58,11 @@ module VagrantPlugins
         ''.tap do |str|
           env.each do |key, value|
             value = %("#{value}") if value.is_a?(String) && value.include?(' ')
-            str << "export #{key}=#{value} && "
+            if @guest == :windows
+              str << "set #{key}=#{value} && "
+            else
+              str << "export #{key}=#{value} && "
+            end
           end if env
         end
       end

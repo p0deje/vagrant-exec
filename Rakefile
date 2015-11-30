@@ -3,28 +3,21 @@ require 'cucumber/rake/task'
 Bundler::GemHelper.install_tasks
 
 namespace :features do
-  desc 'Downloads and adds vagrant box for testing.'
-  task(:bootstrap) do
-    system('bundle exec vagrant box add vagrant_exec http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box')
+  Cucumber::Rake::Task.new(:posix) do |t|
+    ENV['VAGRANT_EXEC_GUEST'] = 'posix'
+    t.cucumber_opts = %w[--format pretty --tags ~@windows]
   end
 
-  Cucumber::Rake::Task.new(:run) do |t|
-    t.cucumber_opts = %w[--format pretty]
+  Cucumber::Rake::Task.new(:windows) do |t|
+    ENV['VAGRANT_EXEC_GUEST'] = 'windows'
+    t.cucumber_opts = %w[--format pretty --tags ~@posix]
   end
 
-  desc 'Removes testing vagrant box.'
-  task(:cleanup) do
-    system('bundle exec vagrant box remove --force vagrant_exec')
-
-    # For some reason, vagrant destroy ID fails for us
-    # so let's just stick to pure VirtualBox
-
-    `VBoxManage list vms`
-      .split("\n")
-      .select { |line| line =~ /aruba_(default|vagrant)/ }
-      .map { |line| line.match(/\{([\w-]+)\}/)[1] }
-      .each { |uuid| system("VBoxManage unregistervm #{uuid} -delete") }
-
+  desc 'Removes testing vagrant boxes.'
+  task :cleanup do
+    system('cd tmp/aruba && bundle exec vagrant destroy --force')
+    system('bundle exec vagrant box remove --force hashicorp/precise64')
+    system('bundle exec vagrant box remove --force ferventcoder/win7pro-x64-nocm-lite')
     system('bundle exec vagrant global-status --prune')
   end
 end

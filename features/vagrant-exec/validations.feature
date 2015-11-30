@@ -8,7 +8,7 @@ Feature: vagrant-exec validations
     Given I write to "Vagrantfile" with:
       """
       Vagrant.configure('2') do |config|
-        config.vm.box = 'vagrant_exec'
+        config.vm.box = 'hashicorp/precise64'
         config.exec.commands true, directory: nil, prepend: true, env: 0
       end
       """
