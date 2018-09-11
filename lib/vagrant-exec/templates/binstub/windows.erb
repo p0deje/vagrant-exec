@@ -1,0 +1,3 @@
+@echo off
+
+ssh -F <%= ssh_config %> -q -t <%= ssh_host %> "<%= shell %> -c '<%= command %> %*'"

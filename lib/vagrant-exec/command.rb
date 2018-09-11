@@ -70,9 +70,9 @@ module VagrantPlugins
           commands = vm.config.exec.commands
 
           explicit = commands.select { |command| command[:cmd] != '*' }
-                             .map { |command| command[:cmd] }
-                             .flatten
-                             .uniq
+                         .map { |command| command[:cmd] }
+                         .flatten
+                         .uniq
 
           if explicit.empty?
             vm.env.ui.error('No commands to generate binstubs for.')
@@ -89,6 +89,13 @@ module VagrantPlugins
           binstubs_path = vm.config.exec.binstubs_path
           Dir.mkdir(binstubs_path) unless Dir.exist?(binstubs_path)
 
+          binstub_template = 'default'
+          binstub_ext=""
+          if Vagrant::Util::Platform.cygwin? or Vagrant::Util::Platform.windows?
+            binstub_template = 'windows'
+            binstub_ext=".bat"
+          end
+
           explicit.each do |command|
             command[:constructed].gsub!('"', '\"') # escape double-quotes
 
@@ -98,11 +105,11 @@ module VagrantPlugins
               shell: vm.config.ssh.shell,
               command: command[:constructed],
             }
-            variables.merge!(template_root: "#{File.dirname(__FILE__)}/templates")
+            variables.merge!(template_root: "#{File.dirname(__FILE__)}/templates/binstub")
 
-            binstub = Vagrant::Util::TemplateRenderer.render('binstub', variables)
+            binstub = Vagrant::Util::TemplateRenderer.render(binstub_template, variables)
 
-            filename = [binstubs_path, command[:command]].join('/')
+            filename = [binstubs_path, command[:command]].join('/') + binstub_ext
             File.open(filename, 'w') { |file| file.write binstub }
             File.chmod(0755, filename)
 
