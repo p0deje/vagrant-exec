@@ -1,3 +1,7 @@
+## 0.5.3
+
+* Generate binstubs as `.bat` files on Windows (#15 thanks @MekDrop)
+
 ## 0.5.2
 
 * Allow to configure binstubs directory (#11)
