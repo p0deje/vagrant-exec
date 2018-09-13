@@ -70,9 +70,9 @@ module VagrantPlugins
           commands = vm.config.exec.commands
 
           explicit = commands.select { |command| command[:cmd] != '*' }
-                         .map { |command| command[:cmd] }
-                         .flatten
-                         .uniq
+                              .map { |command| command[:cmd] }
+                              .flatten
+                              .uniq
 
           if explicit.empty?
             vm.env.ui.error('No commands to generate binstubs for.')
@@ -89,11 +89,12 @@ module VagrantPlugins
           binstubs_path = vm.config.exec.binstubs_path
           Dir.mkdir(binstubs_path) unless Dir.exist?(binstubs_path)
 
-          binstub_template = 'default'
-          binstub_ext=""
-          if Vagrant::Util::Platform.cygwin? or Vagrant::Util::Platform.windows?
+          if Vagrant::Util::Platform.cygwin? || Vagrant::Util::Platform.windows?
             binstub_template = 'windows'
-            binstub_ext=".bat"
+            binstub_ext = '.bat'
+          else
+            binstub_template = 'default'
+            binstub_ext = ''
           end
 
           explicit.each do |command|
